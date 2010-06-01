@@ -68,7 +68,7 @@ class JsonRPC {
 			empty($_SERVER['CONTENT_TYPE']) ||
 			$_SERVER['CONTENT_TYPE'] != 'application/json' ||
 			empty($this->_request['method']) ||
-			empty($this->_request['params']) ||
+			!isset($this->_request['params']) ||
 			!is_array($this->_request['params'])){
 			return false;
 		}
