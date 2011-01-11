@@ -5,7 +5,7 @@
 class JsonRPCException extends Exception {}
 
 class JsonRPC {
-	
+
 	private $_request = array();
 	private $_response = array();
 
@@ -44,7 +44,7 @@ class JsonRPC {
 		$this->_request = array_merge($this->_request, $params);
 	}
 
-	
+
 	public function getResponse(){
 		return $this->_response;
 	}
@@ -53,11 +53,11 @@ class JsonRPC {
 	public function getJsonResponse(){
 		return json_encode($this->_response);
 	}
-	
-	
+
+
 	public function echoJsonResponse(){
 		if (!$this->isNotificationsRequest()) {
-			header('content-type: text/javascript');
+			header('Content-type: text/javascript');
 			echo $this->getJsonResponse();
 		}
 	}
@@ -108,13 +108,13 @@ class JsonRPC {
 	}
 
 	public function callMethod($object, $method, $params){
-		return @call_user_func(array($object, $method), $params);
+		return call_user_func_array(array($object, $method), $params);
 	}
 
 	public function handle($object) {
 		try {
 			$result = $this->callMethod($object, $this->_request['method'], $this->_request['params']);
-			if($result){
+			if($result !== false){
 				$this->makeResponse($result);
 			} else {
 				throw new JsonRPCException('The procedure call is not valid');
@@ -122,8 +122,7 @@ class JsonRPC {
 		} catch (JsonRPCException $e) {
 			$this->makeErrorResponse($e);
 		} catch (Exception $e) {
-			$this->makeErrorResponse('Unknown error');
+			$this->makeErrorResponse(new JsonRPCException('Unknown error'));
 		}
 	}
 }
-?>
